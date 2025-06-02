@@ -41,9 +41,9 @@ class LinearRegressionModel(nn.Module):
 model_0 = LinearRegressionModel()
 
 lossFunction = nn.L1Loss()
-optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.01) 
+optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.001) 
 
-epochs = 1000
+epochs = 10000
 
 train_loss_values = []
 test_loss_values = []
