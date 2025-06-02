@@ -43,7 +43,7 @@ model_0 = LinearRegressionModel()
 lossFunction = nn.L1Loss()
 optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.01) 
 
-epochs = 500
+epochs = 1000
 
 train_loss_values = []
 test_loss_values = []
@@ -84,6 +84,5 @@ print(f"weights: {weight}, bias: {bias}")
 model_0.eval()
 with torch.inference_mode():
   y_preds = model_0(XTest)
-y_preds
 
 plot_predictions(predictions = y_preds)
