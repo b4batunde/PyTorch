@@ -1,0 +1,73 @@
+import torch
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import torch.nn as nn
+import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import make_blobs
+
+X, y = make_blobs(n_samples=2000,
+                  n_features=2,     
+                  centers=4,         
+                  cluster_std=1.5,
+                  random_state=42)
+
+X = torch.from_numpy(X).type(torch.float32)
+y = torch.from_numpy(y).type(torch.long)
+
+XTrain, XTest, yTrain, yTest = train_test_split(X, y, train_size=0.8, random_state=42)
+
+def accuracy(preds, labels):
+    pred_labels = preds.argmax(dim=1)
+    return (pred_labels == labels).float().mean()
+
+class MultiClassClassification(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.model = nn.Sequential(
+            nn.Linear(2, 256),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(256, 256),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(256, 4),
+            nn.LogSoftmax(dim=1)
+        )
+
+    def forward(self, tnsr: torch.Tensor) -> torch.Tensor:
+        return self.model(tnsr)
+
+model = MultiClassClassification()
+
+lossFunction = nn.NLLLoss()
+optimizer = torch.optim.AdamW(params=model.parameters(), lr=0.0005)
+
+epochValues = []
+lossValues = []
+
+epochs = 1000
+
+for epoch in range(epochs):
+    model.train()
+
+    yTrainPred = model(XTrain)
+    trainLoss = lossFunction(yTrainPred, yTrain)
+    optimizer.zero_grad()
+    trainLoss.backward()
+    optimizer.step()
+
+    model.eval()
+    with torch.inference_mode():
+        yTestPred = model(XTest)
+        testLoss = lossFunction(yTestPred, yTest)
+        if epoch % 100 == 0:
+            print(f"Epoch {epoch}, Loss = {testLoss:.4f}")
+
+model.eval()
+with torch.inference_mode():
+    predictions = model(XTest)
+
+final_accuracy = accuracy(predictions, yTest)
+print(f"Final Test Accuracy: {final_accuracy:.4f}")
