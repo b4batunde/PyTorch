@@ -14,8 +14,8 @@ XTest, yTest = X[80:], y[80:]
 
 def plotPrediction(trainData = XTrain, trainLabels = yTrain, testData = XTest, testLabels = yTest, prediction = None):
     plt.figure()
-    plt.scatter(trainData, trainLabels, color = "Blue", s = 4, label = "Training Data")
-    plt.scatter(testData, testLabels, color = "Green", s = 4, label = "Testing Data")
+    plt.scatter(trainData, trainLabels, color = "Black", s = 4, label = "Training Data")
+    plt.scatter(testData, testLabels, color = "Pink", s = 4, label = "Testing Data")
     if prediction is not None:
         plt.scatter(testData, prediction, color = "Red",  s = 4, label = "Prediction")
     plt.legend()
